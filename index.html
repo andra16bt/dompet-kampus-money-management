@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff3cc" />
+    <title>Dompet Kampus - Level Bulan Ini</title>
+
+    <!-- 8-Bit Authentic Pixel Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- RETRO 8-BIT TOP HUD BAR -->
+    <header class="hud-bar">
+      <div class="hud-container">
+        <!-- Brand Logo -->
+        <div class="hud-brand">
+          <span class="brand-chip brand-primary">DOMPET</span>
+          <span class="brand-chip brand-secondary">KAMPUS</span>
+
+          <!-- Lives / Hearts HUD -->
+          <div class="hearts-container" id="heartsHUD">
+            <svg class="pixel-heart filled" viewBox="0 0 16 16">
+              <path
+                d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h6v2H1zM9 5h6v2H9zM1 7h14v2H1zM2 9h12v2H2zM4 11h8v2H4zM6 13h4v2H6z"
+              />
+            </svg>
+            <svg class="pixel-heart filled" viewBox="0 0 16 16">
+              <path
+                d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h6v2H1zM9 5h6v2H9zM1 7h14v2H1zM2 9h12v2H2zM4 11h8v2H4zM6 13h4v2H6z"
+              />
+            </svg>
+            <svg class="pixel-heart filled" viewBox="0 0 16 16">
+              <path
+                d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h6v2H1zM9 5h6v2H9zM1 7h14v2H1zM2 9h12v2H2zM4 11h8v2H4zM6 13h4v2H6z"
+              />
+            </svg>
+            <svg class="pixel-heart empty" viewBox="0 0 16 16">
+              <path
+                d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h2v2H1zM5 5h2v2H5zM9 5h2v2H9zM13 5h2v2h-2zM1 7h2v2H1zM13 7h2v2h-2zM2 9h2v2H2zM12 9h2v2h-2zM4 11h2v2H4zM10 11h2v2h-2zM6 13h4v2H6z"
+              />
+            </svg>
+            <span class="hp-label">HP <span id="hpPercent">75</span>%</span>
+          </div>
+        </div>
+
+        <!-- Right HUD -->
+        <div class="hud-right">
+          <!-- Level Badge -->
+          <div class="level-badge">
+            <span class="level-label">WORLD STAGE</span>
+            <span class="level-value"
+              >LVL <span id="currentLevel">10</span> •
+              <span id="currentMonth">OKTOBER</span></span
+            >
+          </div>
+
+          <!-- Score Box -->
+          <div class="score-box">
+            <svg class="coin-icon" viewBox="0 0 16 16">
+              <path
+                d="M5 1h6v2H5zM3 3h2v2H3zM11 3h2v2h-2zM1 5h2v6H1zM13 5h2v6h-2zM3 11h2v2H3zM11 11h2v2h-2zM5 13h6v2H5zM6 5h4v6H6z"
+              />
+            </svg>
+            <span class="score-label">SCORE:</span>
+            <span class="score-value" id="hudScoreValue">Rp 0</span>
+          </div>
+        </div>
+      </div>
+      <div class="pixel-fringe"></div>
+    </header>
+
+    <!-- MAIN GAME STAGE CONTAINER -->
+    <main class="main-container">
+      <!-- Budget Input Banner -->
+      <section class="budget-banner pixel-card">
+        <div class="budget-header">
+          <div class="budget-title">
+            <svg class="icon-treasure" viewBox="0 0 16 16">
+              <path
+                d="M5 2h6v2H5zM3 4h2v2H3zM11 4h2v2h-2zM2 6h2v4H2zM12 6h2v4h-2zM3 10h2v2H3zM11 10h2v2h-2zM5 12h6v2H5zM7 6h2v4H7z"
+              />
+            </svg>
+            <div>
+              <span class="budget-subtitle">UANG SAKU BULANAN</span>
+              <span class="budget-current" id="budgetDisplay">Belum diset</span>
+            </div>
+          </div>
+          <button class="btn-set-budget" id="setBudgetBtn">SET BUDGET</button>
+        </div>
+        <div
+          class="budget-input-group"
+          id="budgetInputGroup"
+          style="display: none"
+        >
+          <input
+            type="text"
+            id="budgetInput"
+            inputmode="numeric"
+            placeholder="Masukkan uang saku (cth: 2.500.000)"
+            min="10000"
+            step="10000"
+          />
+          <button class="btn btn-primary" id="confirmBudgetBtn">
+            KONFIRMASI
+          </button>
+          <button class="btn btn-cancel" id="cancelBudgetBtn">BATAL</button>
+        </div>
+      </section>
+
+      <!-- Decorative World Ribbon -->
+      <!-- <div class="world-ribbon pixel-card">
+        <div class="world-left">
+          <div class="pixel-clouds">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="world-label">WORLD 1-1: KAMPUS BARAT</span>
+        </div>
+        <div class="world-right">
+          <div class="pixel-brick"></div>
+          <div class="pixel-mystery">?</div>
+          <div class="pixel-brick"></div>
+          <div class="pixel-pipe"></div>
+        </div>
+      </div> -->
+
+      <!-- Main 2-Column Layout -->
+      <div class="main-grid">
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+          <!-- Add Expense Form -->
+          <section class="pixel-card form-card">
+            <div class="card-header">
+              <div class="header-left">
+                <span class="material-symbols-outlined icon-add"
+                  >add_circle</span
+                >
+                <h2>TAMBAH PENGELUARAN</h2>
+              </div>
+              <span class="badge-quest">ITEM QUEST</span>
+            </div>
+
+            <form id="expenseForm">
+              <div class="form-group">
+                <label for="expenseName">
+                  <span>NAMA ITEM / PENGELUARAN</span>
+                  <span class="label-required">[WAJIB]</span>
+                </label>
+                <input
+                  type="text"
+                  id="expenseName"
+                  class="input-retro"
+                  autocomplete="off"
+                  enterkeyhint="next"
+                  placeholder="Cth: Nasi Padang + Es Teh"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="expenseAmount">
+                  <span>NOMINAL (RP)</span>
+                  <span class="label-info">COIN COST</span>
+                </label>
+                <div class="input-with-prefix">
+                  <span class="input-prefix">Rp</span>
+                  <input
+                    type="text"
+                    id="expenseAmount"
+                    inputmode="numeric"
+                    class="input-retro input-amount"
+                    placeholder="15.000"
+                    min="100"
+                    step="100"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="category-label">
+                  <span>PILIH KATEGORI</span>
+                  <span class="category-selected" id="selectedCatLabel"
+                    >MAKAN</span
+                  >
+                </div>
+                <div class="category-chips" id="categoryChips">
+                  <button
+                    type="button"
+                    class="chip active"
+                    data-category="Makan"
+                  >
+                    <svg viewBox="0 0 16 16">
+                      <path
+                        d="M4 3h8v2H4zM2 5h12v2H2zM1 7h14v2H1zM3 9h10v2H3zM2 11h12v2H2z" 
+                      />
+                    </svg>
+                    <span>MAKAN</span>
+                  </button>
+                  <button type="button" class="chip" data-category="Transport">
+                    <svg viewBox="0 0 16 16">
+                      <path
+                        d="M9 2h2v4H9zM1 6h7v2H1zM1 8h14v2H1zM2 10h4v4H2zM10 10h4v4h-4z"
+                      />
+                    </svg>
+                    <span>TRANSPORT</span>
+                  </button>
+                  <button type="button" class="chip" data-category="Nongkrong">
+                    <svg viewBox="0 0 16 16">
+                      <path
+                        d="M3 2h8v2H3zM2 4h10v6H2zM12 5h3v4h-3zM4 12h6v2H4z"
+                      />
+                    </svg>
+                    <span>NONGKRONG</span>
+                  </button>
+                  <button type="button" class="chip" data-category="Kuliah">
+                    <svg viewBox="0 0 16 16">
+                      <path
+                        d="M3 2h10v2H3zM2 4h12v7H2zM4 11h8v2H4zM2 13h12v1H2z"
+                      />
+                    </svg>
+                    <span>KULIAH</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="chip chip-wide"
+                    data-category="Lainnya"
+                  >
+                    <svg viewBox="0 0 16 16">
+                      <path
+                        d="M7 1h2v3H7zM4 4h8v2H4zM1 6h14v2H1zM3 8h10v2H3zM2 10h12v2H2zM4 12h8v2H4z"
+                      />
+                    </svg>
+                    <span>LAINNYA</span>
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-submit">
+                <span class="btn-icon">+</span>
+                <span>CATAT PENGELUARAN</span>
+              </button>
+            </form>
+          </section>
+
+          <!-- Expense List -->
+          <section class="pixel-card list-card">
+            <div class="card-header">
+              <div class="header-left">
+                <span class="material-symbols-outlined icon-list"
+                  >receipt_long</span
+                >
+                <h2>LOG PENGELUARAN</h2>
+              </div>
+              <span class="badge-count"
+                ><span id="itemCount">0</span> ITEMS DIREKAM</span
+              >
+            </div>
+
+            <div class="expense-list" id="expenseList">
+              <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <p>BELUM ADA PENGELUARAN.<br />MULAI GAME!</p>
+              </div>
+            </div>
+
+            <div class="list-footer">
+              <span class="footer-label">INVENTORI LOG</span>
+              <button class="footer-action" id="resetAllBtn">
+                🔄 NEW GAME (RESET)
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+          <section class="pixel-card summary-card">
+            <div class="card-header">
+              <div>
+                <span class="summary-subtitle">STATUS KEUANGAN BULAN INI</span>
+                <h2>STAGE SUMMARY</h2>
+              </div>
+              <div class="summary-icon">
+                <svg viewBox="0 0 16 16">
+                  <path d="M2 1h12v4H2zM3 5h10v5H3zM4 10h8v3H4zM6 13h4v2H6z" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="summary-rows">
+              <div class="summary-row">
+                <span class="row-label">UANG SAKU (HP MAX):</span>
+                <span class="row-value" id="summaryBudget">Rp 0</span>
+              </div>
+              <div class="summary-row">
+                <span class="row-label">TOTAL EXPENSES:</span>
+                <span class="row-value danger" id="summaryExpense">Rp 0</span>
+              </div>
+            </div>
+
+            <!-- Remaining Balance -->
+            <div class="balance-display">
+              <div class="balance-header">
+                <span class="balance-label">SISA SALDO AKTIF</span>
+                <span class="status-badge" id="statusBadge">STATUS: AMAN</span>
+              </div>
+              <div class="balance-main">
+                <div class="balance-amount" id="remainingAmount">Rp 0</div>
+                <span class="balance-percent" id="balancePercent"
+                  >100% POOL</span
+                >
+              </div>
+            </div>
+
+            <!-- HP Bar -->
+            <div class="hp-bar-section">
+              <div class="hp-bar-header">
+                <span>PLAYER HEALTH BAR:</span>
+                <span class="hp-label-main">
+                  <svg class="heart-small" viewBox="0 0 16 16">
+                    <path
+                      d="M2 3h4v2H2zM10 3h4v2h-4zM1 5h6v2H1zM9 5h6v2H9zM1 7h14v2H1zM2 9h12v2H2zM4 11h8v2H4zM6 13h4v2H6z"
+                    />
+                  </svg>
+                  <span id="hpBarLabel">HP 100% [AMAN]</span>
+                </span>
+              </div>
+              <div class="hp-segments" id="hpSegments">
+                <!-- 10 segments will be generated by JS -->
+              </div>
+            </div>
+
+            <!-- Tips Box -->
+            <div class="tips-box">
+              <div class="tips-icon">
+                <div class="tips-chest"></div>
+              </div>
+              <div class="tips-content">
+                <span class="tips-title">TIPS LEVEL INI:</span>
+                <span class="tips-text" id="tipsText"
+                  >Set uang saku untuk mulai tracking pengeluaran!</span
+                >
+              </div>
+            </div>
+          </section>
+
+          <!-- Category Statistics -->
+          <section class="pixel-card stats-card">
+            <div class="card-header">
+              <div class="header-left">
+                <span class="material-symbols-outlined icon-stats"
+                  >leaderboard</span
+                >
+                <h2>ALOKASI STATISTIK</h2>
+              </div>
+              <span class="badge-exp">EXP SPLIT</span>
+            </div>
+
+            <div class="category-stats" id="categoryStats">
+              <div class="empty-state-small">
+                <p>Belum ada data kategori</p>
+              </div>
+            </div>
+
+            <div class="stats-footer">
+              <span class="footer-bonus">TRACK SPENDING PER KATEGORI</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="retro-footer">
+      <div class="footer-ground"></div>
+      <div class="footer-content">
+        <div class="footer-left">
+          <span class="footer-indicator"></span>
+          <span>PLAYER 1 READY • SYSTEM NOMINAL</span>
+        </div>
+        <div class="footer-center">
+          DOMPET KAMPUS © 2024 RETRO EDITION • PEMROGRAMAN WEB
+        </div>
+        <div class="footer-right">
+          <span class="footer-link">GITHUB</span>
+          <span class="footer-link">DOCS</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="retro-toast" id="retroToast" role="status" aria-live="polite">
+      <div class="toast-icon">
+        <svg viewBox="0 0 16 16">
+          <path
+            d="M5 2h6v2H5zM2 4h12v4H2zM2 8h3v4H2zM11 8h3v4h-3zM5 8h6v2H5zM6 10h4v2H6z"
+          />
+        </svg>
+      </div>
+      <div class="toast-content">
+        <span class="toast-title" id="toastTitle">NOTIFICATION</span>
+        <span class="toast-message" id="toastMessage">Message here</span>
+      </div>
+    </div>
+
+    <!-- Retro Confirmation Modal -->
+    <div class="retro-modal-overlay" id="confirmModal">
+      <div class="retro-modal">
+        <div class="modal-header">
+          <span class="modal-icon">⚠</span>
+          <h3 class="modal-title" id="modalTitle">KONFIRMASI</h3>
+        </div>
+        <div class="modal-body">
+          <p class="modal-message" id="modalMessage">Apakah Anda yakin?</p>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-modal btn-cancel" id="modalCancel">
+            <span>✕ BATAL</span>
+          </button>
+          <button class="btn-modal btn-confirm" id="modalConfirm">
+            <span>✓ YA, LANJUTKAN</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
