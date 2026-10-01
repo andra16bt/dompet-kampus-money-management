@@ -19,7 +19,9 @@
     />
 
     <link rel="stylesheet" href="style.css" />
-  </head>
+  <style>html.intro-pending{background:#2b190d}html.intro-pending body{visibility:hidden}</style>
+    <script>document.documentElement.classList.add("intro-pending");setTimeout(function(){document.documentElement.classList.remove("intro-pending")},3000)</script>
+</head>
   <body>
     <!-- RETRO 8-BIT TOP HUD BAR -->
     <header class="hud-bar">
@@ -437,6 +439,7 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="intro.js"></script>
     <script src="pet.js"></script>
   </body>
 </html>
