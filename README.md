@@ -2,7 +2,7 @@
 
 **A retro 8-bit expense tracker for students.** Set your monthly allowance, log what you spend, and watch your "HP" bar drain like a boss fight, all while two pixel-art cats roam around your screen.
 
-🔗 **Live demo:** [kampus.vercel.app](https://kampus.vercel.app)
+🔗 **Live demo:** [dompet-kampus.vercel.app](https://dompet-kampus.vercel.app)
 
 > *Dompet Kampus* is Indonesian for "campus wallet". The UI copy is in Indonesian, and amounts are shown in Rupiah (Rp).
 
