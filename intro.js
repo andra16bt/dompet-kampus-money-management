@@ -6,6 +6,7 @@
   const reveal = () => root.classList.remove("intro-pending");
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) { reveal(); return; }
   window.__introRunning = true; // pet.js menunggu sinyal dari intro ini
+  const sfx = (n, o) => window.SFX && window.SFX.play(n, o);
 
   /* ---------- Pengaturan ---------- */
   const RUN_MS = 3400;  // lama kucing berlari
@@ -144,7 +145,7 @@
     }
 
     /* ---------- Loop ---------- */
-    let phase = "run", got = 0, tw = 0;
+    let phase = "run", got = 0, tw = 0, wasAir = false;
     const t0 = performance.now();
     let last = t0;
     const skip = () => { if (phase === "run") { phase = "wait"; tw = -1e9; } };
@@ -164,13 +165,15 @@
           const k = (cx - (c.cx - 130)) / 170;
           if (k > 0 && k < 1) { off = -Math.sin(Math.PI * k) * CHh * 0.95; air = true; }
         }
+        if (air && !wasAir) sfx("jump");
+        wasAir = air;
         for (const c of coins)
-          if (!c.got && cx >= c.cx) { c.got = true; got++; c.el.style.animation = "introPop .3s ease-out forwards"; }
+          if (!c.got && cx >= c.cx) { c.got = true; got++; sfx("coin", { pitch: 1 + got * 0.05 }); c.el.style.animation = "introPop .3s ease-out forwards"; }
         title.textContent = fullTitle.slice(0, Math.floor((t - t0) / 60));
         fill.style.width = Math.floor(p * 20) * 5 + "%";
         info.textContent = `COINS ${String(got).padStart(2, "0")}/${COINS}  ${String(Math.round(p * 100)).padStart(3, "0")}%`;
         place(cx, gy + off, 1, air ? F.air : [F.w1, F.open, F.w2, F.open][Math.floor(t / 90) % 4]);
-        if (p >= 1) { phase = "wait"; tw = t; }
+        if (p >= 1) { phase = "wait"; tw = t; sfx("success"); }
       } else if (phase === "wait") {
         title.textContent = fullTitle;
         fill.style.width = "100%";
@@ -178,10 +181,11 @@
         place(cx, gy, 1, F.open);
         if (t - tw > 600) { // lompat: layar mulai pecah
           phase = "jump"; vy = -950; td = t; hud.style.opacity = 0; buildTiles();
+          sfx("jump"); sfx("shatter");
         }
       } else {
         vy += 2400 * dt; fy += vy * dt;
-        if (fy >= vh && vy > 0) { fy = vh; landed = true; }
+        if (fy >= vh && vy > 0) { fy = vh; if (!landed) { landed = true; sfx("land"); } }
         const s = fy > gy ? 1 - (1 - 4 / SC) * Math.min(1, (fy - gy) / (vh - gy)) : 1;
         place(cx, fy, s, landed ? F.open : F.air);
         const el = (t - td) / 1000;

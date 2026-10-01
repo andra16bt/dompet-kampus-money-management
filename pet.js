@@ -12,8 +12,8 @@
   // Hanya aktif di desktop: layar lebar + mouse. Mobile dan tablet tidak.
   const DESKTOP = matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)");
   const CATS = [
-    { name: "Oren", fur: "#f26a21", startAt: 0.25 },
-    { name: "Abu", fur: "#8b95a8", startAt: 0.75 },
+    { name: "Oren", fur: "#f26a21", startAt: 0.25, pitch: 1 },
+    { name: "Abu", fur: "#8b95a8", startAt: 0.75, pitch: 0.8 }, // pitch = nada suara
   ];
 
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -22,6 +22,7 @@
 
   /* ---------- Sprite (digambar dari teks) ---------- */
   const R = (c, n) => c.repeat(n);
+  const sfx = (n, o) => window.SFX && window.SFX.play(n, o);
   const body = (open) => [
     "",
     "..........k...k",
@@ -144,6 +145,7 @@
     let until = 800 + Math.random() * 1500, lastFrame = "";
     let msg = "", msgUntil = 0, lastLine = -1; // gelembung teks
     let hvx = 0, hvy = 0;                      // kecepatan saat di-drag
+    let thrown = false;                        // habis dilempar pemain?
 
     function think(t) {
       const ps = platforms().filter((c) => c.e !== plat);
@@ -183,7 +185,10 @@
       mode = "walk";
     }
 
-    function land(t, e) { plat = e; vx = vy = 0; mode = "idle"; until = t + 800; }
+    function land(t, e) {
+      plat = e; vx = vy = 0; mode = "idle"; until = t + 800;
+      if (thrown) { thrown = false; sfx("land", { pitch: cfg.pitch }); }
+    }
 
     function step(t, dt) {
       const gy = groundY();
@@ -269,6 +274,7 @@
       do { i = Math.floor(Math.random() * LINES.length); } while (i === lastLine);
       lastLine = i;
       say(LINES[i], 1400);
+      sfx("meow", { pitch: cfg.pitch });
     }
 
     /* Klik = bersuara, tahan lalu geser = angkat kucing, lepas = jatuh/dilempar */
@@ -288,6 +294,7 @@
         mode = "held"; plat = null; after = null; vx = vy = hvx = hvy = 0;
         el.classList.add("dragging");
         say("EH?!", 1000);
+        sfx("pickup", { pitch: cfg.pitch });
       }
       const t = performance.now(), d = Math.max(0.001, (t - down.lt) / 1000);
       hvx = 0.6 * hvx + 0.4 * ((e.clientX - down.lx) / d);
@@ -307,8 +314,9 @@
         return;
       }
       const c = (v, m) => Math.max(-m, Math.min(m, v));
-      vx = c(hvx, 900); vy = c(hvy, 1400); mode = "air";
+      vx = c(hvx, 900); vy = c(hvy, 1400); mode = "air"; thrown = true;
       say(Math.hypot(vx, vy) > 700 ? "WHEEE!" : "HUFT!", 1100);
+      if (Math.hypot(vx, vy) > 700) sfx("throw", { pitch: cfg.pitch });
     };
     el.addEventListener("pointerup", release);
     el.addEventListener("pointercancel", release);
