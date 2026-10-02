@@ -17,6 +17,8 @@
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
       ctx = new AC();
+      // iPhone: bunyikan Web Audio walau tombol silent aktif (Safari 16.4+)
+      try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
       master = ctx.createGain();
       master.gain.value = VOLUME;
       const comp = ctx.createDynamicsCompressor();
@@ -27,7 +29,7 @@
   // Browser (terutama iOS Safari) baru mengizinkan suara setelah sentuhan pertama
   const unlock = () => {
     const c = ensure();
-    if (c && c.state === "suspended") c.resume().catch(() => {});
+    if (c && c.state !== "running") c.resume().catch(() => {});
   };
   ["pointerdown", "touchend", "keydown"].forEach((ev) =>
     addEventListener(ev, unlock, { capture: true, passive: true }));
@@ -79,15 +81,36 @@
     shatter: (p) => { noise(0.8, { vol: 0.22, from: 7000, to: 250 }); [1047, 784, 659, 523].forEach((f, i) => tone(f * p, 0.1, { at: i * 0.09, vol: 0.06 })); },
   };
 
-  function play(name, opts = {}) {
-    if (muted || !S[name]) return;
-    const c = ensure();
-    if (!c) return;
-    if (c.state !== "running") { c.resume().catch(() => {}); return; } // belum ada interaksi: diam
+  function fire(name, opts) {
     const now = performance.now();
     if (now - (last[name] || 0) < 35) return; // cegah suara menumpuk
     last[name] = now;
     S[name](opts.pitch || 1);
+  }
+
+  function play(name, opts = {}) {
+    if (muted || !S[name]) return;
+    const c = ensure();
+    if (!c) return;
+    if (c.state !== "running") {
+      // Suara belum dibuka. Jika ini terjadi tepat setelah sentuhan/klik pengguna, buka lalu
+      // bunyikan (agar klik pertama tidak senyap). Jika bukan, diam saja (jangan menumpuk antrean).
+      const active = navigator.userActivation ? navigator.userActivation.isActive : true;
+      c.resume().then(() => { if (active && c.state === "running") fire(name, opts); }).catch(() => {});
+      return;
+    }
+    fire(name, opts);
+  }
+
+  // Menunggu suara siap. true = boleh bunyi, false = diblokir browser (butuh sentuhan dulu).
+  function ready() {
+    const c = ensure();
+    if (!c) return Promise.resolve(true); // browser tanpa Web Audio: tidak ada yang ditunggu
+    if (c.state === "running") return Promise.resolve(true);
+    return Promise.race([
+      c.resume().then(() => c.state === "running"),
+      new Promise((r) => setTimeout(() => r(c.state === "running"), 250)),
+    ]).catch(() => false);
   }
 
   /* ---------- Sambungan ke website ---------- */
@@ -136,5 +159,5 @@
   render();
   document.body.appendChild(btn);
 
-  window.SFX = { play, get muted() { return muted; } };
+  window.SFX = { play, ready, get muted() { return muted; } };
 })();
